@@ -68,11 +68,6 @@ def editTextField(event):
     textField.config(state=NORMAL, bg="white")
 
 
-def textFieldToDocx(event):
-    textTable = textField.get(2.0, END)
-    print(textTable)
-
-
 techtxt = open('tech.txt','r',encoding="utf-8")
 techlist = techtxt.read().splitlines()
 grouptxt = open('group.txt','r',encoding="utf-8")
@@ -80,6 +75,8 @@ grouplist = grouptxt.read().splitlines()
 
 root = Tk()
 root.title('Mover 9000')
+root.resizable(False, False)
+
 #----------------------------BUTTONS-----------------------------------------------------------------------------------
 buttonFrame = Frame(root)
 buttonFrame.pack()
@@ -93,11 +90,14 @@ groupIn.set(grouplist[1])
 inventNumber = StringVar(root)
 codeNumber = StringVar(root)
 techMenu = OptionMenu(buttonFrame, tech, *techlist)
-inventNumberEntry = Entry(buttonFrame, justify='center',textvariable=inventNumber)
-codeNumberEntry = Entry(buttonFrame, justify='center',textvariable=codeNumber)
+techMenu.config(width=35, font=12)
+inventNumberEntry = Entry(buttonFrame,font='Arial 16', justify='center', textvariable=inventNumber)
+codeNumberEntry = Entry(buttonFrame, font='Arial 16', justify='center', textvariable=codeNumber, width=10)
 groupOutMenu = OptionMenu(buttonFrame, groupOut, *grouplist)
+groupOutMenu.config(width=21, font=12)
 groupInMenu = OptionMenu(buttonFrame, groupIn, *grouplist)
-buttonPlus = Button(buttonFrame, text=' + ')
+groupInMenu.config(width=21, font=12)
+buttonPlus = Button(buttonFrame, text=' + ', font='Arial 16', justify='center')
 buttonPlus.bind('<Button-1>',nextVar)
 
 techMenu.pack(side=LEFT)
@@ -110,7 +110,7 @@ buttonPlus.pack(side=LEFT)
 
 textFrame = Frame(root)
 textFrame.pack()
-textField = Text(textFrame,width=100, state=DISABLED,bg="gainsboro")
+textField = Text(textFrame,width=150, state=DISABLED,bg="gainsboro")
 scrollText = Scrollbar(textFrame, command=textField.yview)
 scrollText.pack(side=RIGHT, fill=Y)
 textField.config(yscrollcommand=scrollText.set)
