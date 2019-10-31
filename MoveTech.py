@@ -2,14 +2,59 @@
 
 from tkinter import *
 import tkinter.ttk as ttk
+from docx import Document
+from docx.shared import Pt, Cm
+from docx.enum.table import WD_TABLE_ALIGNMENT
 
 
-def ttget(event):
+document = Document()
+style = document.styles['Normal']
+font = style.font
+font.name = 'Times New Roman'
+font.size = Pt(12)
+
+
+def textFieldToDocx(event):
     line = textField.get(2.0, END)
     mylist = line.split('\n')
+    mylist.pop()
     for i in range(len(mylist)):
         mylist[i] = str(i+1)+'|'+str(mylist[i])
-    print(mylist)
+    records = []
+    tmplist = []
+    for x in range(len(mylist)):
+        tmplist = mylist[x].split('|')
+        tmplist[2] = tmplist[2] + '\n(' + tmplist[3] + ')'
+        del tmplist[3]
+        records.append(tmplist)
+
+    table = document.add_table(rows=1, cols=5, style='Table Grid')
+    table.alignment = WD_TABLE_ALIGNMENT.CENTER
+
+    table.autofit = False
+    table.allow_autofit = False
+    table.columns[0].width = Cm(0.7)    # № п/п
+    table.columns[1].width = Cm(6.1)    # Перемещение
+    table.columns[2].width = Cm(4.0)    # Инв. номер
+    table.columns[3].width = Cm(3.6)    # Забрали из отдела\n ФИО
+    table.columns[4].width = Cm(3.6)    # Поставили в отдел\n ФИО
+    hdr_cells = table.rows[0].cells
+    hdr_cells[0].text = '№'
+    hdr_cells[1].text = 'Перемещение'
+    hdr_cells[2].text = 'Инв. номер'
+    hdr_cells[3].text = 'Забрали из отдела\n ФИО'
+    hdr_cells[4].text = 'Поставили в отдел\n ФИО'
+
+    for num, id, invent, out, inp in records:
+        row_cells = table.add_row().cells
+        row_cells[0].text = num
+        row_cells[1].text = id
+        row_cells[2].text = invent
+        row_cells[3].text = out
+        row_cells[4].text = inp
+
+    document.save('test.docx')
+    print('ГОТОВО')
 
 
 def nextVar(event):
@@ -77,9 +122,7 @@ editButton = Button(doneFrame, text = 'РЕДАКТИРОВАТЬ')
 doneButton = Button(doneFrame, text ='ГОТОВО')
 editButton.pack(side=TOP, fill=X)
 doneButton.pack(fill=X)
-#doneButton.bind('<Button-1>',textFieldToDocx)
+doneButton.bind('<Button-1>',textFieldToDocx)
 editButton.bind('<Button-1>', editTextField)
-
-doneButton.bind('<Button-1>',ttget)
 
 root.mainloop()
