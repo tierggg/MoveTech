@@ -6,13 +6,14 @@ from docx.shared import Pt, Inches
 from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from datetime import datetime
-
+from tkinter import filedialog as fd
 
 document = Document()
 style = document.styles['Normal']
 font = style.font
 font.name = 'Times New Roman'
 font.size = Pt(12)
+
 
 
 def textFieldToDocx(event):
@@ -58,7 +59,10 @@ def textFieldToDocx(event):
     datepar = document.add_paragraph('\n\n'+ dateEntry.get()+'			Подпись_____________		'
                                      + people.get())
     datepar.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-    document.save('test.docx')
+
+    file_name = fd.asksaveasfilename(initialfile=('#'+actNumber.get()+'_'+dateEntry.get()),
+                                     defaultextension=".docx",filetypes=[('docx files','*.docx')])
+    document.save(file_name)
     textField.config(state=NORMAL)
     textField.delete(1.0, END)
     textField.config(state=DISABLED)
