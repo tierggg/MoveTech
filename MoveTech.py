@@ -68,9 +68,6 @@ def textFieldToDocx(event):
     file_name = fd.asksaveasfilename(initialfile=('#'+actNumber.get()+'_'+dateEntry.get()),
                                      defaultextension=".docx",filetypes=[('docx files','*.docx')])
     document.save(file_name)
-    textField.config(state=NORMAL)
-    textField.delete(1.0, END)
-    textField.config(state=DISABLED)
     root.destroy()
     print('ГОТОВО')
 
