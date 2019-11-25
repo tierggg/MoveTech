@@ -1,10 +1,11 @@
 ## -*- coding: utf-8 -*-
 
 from tkinter import *
-import tkinter.ttk as ttk
 from docx import Document
-from docx.shared import Pt, Cm
+from docx.shared import Pt, Inches
 from docx.enum.table import WD_TABLE_ALIGNMENT
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+from datetime import datetime
 
 
 document = Document()
@@ -27,17 +28,18 @@ def textFieldToDocx(event):
         tmplist[2] = tmplist[2] + '\n(' + tmplist[3] + ')'
         del tmplist[3]
         records.append(tmplist)
-
+    actpar = document.add_paragraph('Акт о переносе техники №' + actNumber.get())
+    actpar.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
     table = document.add_table(rows=1, cols=5, style='Table Grid')
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
 
     table.autofit = False
     table.allow_autofit = False
-    table.columns[0].width = Cm(0.7)    # № п/п
-    table.columns[1].width = Cm(6.1)    # Перемещение
-    table.columns[2].width = Cm(4.0)    # Инв. номер
-    table.columns[3].width = Cm(3.6)    # Забрали из отдела\n ФИО
-    table.columns[4].width = Cm(3.6)    # Поставили в отдел\n ФИО
+    table.columns[0].width = Inches(0.4)      # № п/п
+    table.columns[1].width = Inches(2.1)    # Перемещение
+    table.columns[2].width = Inches(1.3)    # Инв. номер
+    table.columns[3].width = Inches(1.3)    # Забрали из отдела\n ФИО
+    table.columns[4].width = Inches(1.3)    # Поставили в отдел\n ФИО
     hdr_cells = table.rows[0].cells
     hdr_cells[0].text = '№'
     hdr_cells[1].text = 'Перемещение'
@@ -53,7 +55,13 @@ def textFieldToDocx(event):
         row_cells[3].text = out
         row_cells[4].text = inp
 
+    datepar = document.add_paragraph('\n\n'+ dateEntry.get()+'			Подпись_____________		'
+                                     + people.get())
+    datepar.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
     document.save('test.docx')
+    textField.config(state=NORMAL)
+    textField.delete(1.0, END)
+    textField.config(state=DISABLED)
     print('ГОТОВО')
 
 
@@ -72,10 +80,20 @@ techtxt = open('tech.txt','r',encoding="utf-8")
 techlist = techtxt.read().splitlines()
 grouptxt = open('group.txt','r',encoding="utf-8")
 grouplist = grouptxt.read().splitlines()
+peopletxt = open('people.txt','r',encoding="utf-8")
+peoplelist = peopletxt.read().splitlines()
 
 root = Tk()
 root.title('Mover 9000')
 root.resizable(False, False)
+
+numberFrame = Frame(root)
+numberFrame.pack()
+actNumber = StringVar(root)
+actLabel = Label(numberFrame, text = 'Акт о переносе техники №',font='Arial 16')
+actLabel.pack(side=LEFT)
+actNumberEntry = Entry(numberFrame,font='Arial 16', justify='center',textvariable=actNumber,width=4)
+actNumberEntry.pack(side=LEFT)
 
 #----------------------------BUTTONS-----------------------------------------------------------------------------------
 buttonFrame = Frame(root)
@@ -115,14 +133,33 @@ scrollText = Scrollbar(textFrame, command=textField.yview)
 scrollText.pack(side=RIGHT, fill=Y)
 textField.config(yscrollcommand=scrollText.set)
 textField.pack()
-
 doneFrame = Frame(root)
 doneFrame.pack(fill=X)
-editButton = Button(doneFrame, text = 'РЕДАКТИРОВАТЬ')
+editButton = Button(doneFrame, text = 'Редактировать список', font=16)
 doneButton = Button(doneFrame, text ='ГОТОВО', font=18)
 editButton.pack(side=TOP, fill=X)
+editButton.bind('<Button-1>', editTextField)
+nLabel = Label(doneFrame, text ='\n',font='Arial 2')
+nLabel.pack(fill=X)
+dateFrame = Frame(doneFrame)
+dateFrame.pack(fill=X)
+
+noow = datetime.now()
+docDate = StringVar()
+dateEntry = Entry(dateFrame,font='Arial 16', justify='center',textvariable=docDate)
+dateEntry.insert(0,str(noow.day)+'.'+str(noow.month)+'.'+str(noow.year))
+dateEntry.pack(side=LEFT)
+
+people = StringVar(root)
+people.set(peoplelist[0])
+peopleMenu = OptionMenu(dateFrame,people,*peoplelist)
+peopleMenu.config(width=21, font=12)
+peopleMenu.pack(side=RIGHT)
+
+n2Label = Label(doneFrame, text ='\n',font='Arial 2')
+n2Label.pack(fill=X)
 doneButton.pack(fill=X)
 doneButton.bind('<Button-1>',textFieldToDocx)
-editButton.bind('<Button-1>', editTextField)
+
 
 root.mainloop()
