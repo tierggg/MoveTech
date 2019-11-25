@@ -8,12 +8,17 @@ from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from datetime import datetime
 from tkinter import filedialog as fd
 
+
+if __name__ == "__main__":
+    techpath = 'tech.txt'
+    grouppath = "group.txt"
+    peoplepath = 'people.txt'
+
 document = Document()
 style = document.styles['Normal']
 font = style.font
 font.name = 'Times New Roman'
 font.size = Pt(12)
-
 
 
 def textFieldToDocx(event):
@@ -66,6 +71,7 @@ def textFieldToDocx(event):
     textField.config(state=NORMAL)
     textField.delete(1.0, END)
     textField.config(state=DISABLED)
+    root.destroy()
     print('ГОТОВО')
 
 
@@ -80,11 +86,11 @@ def editTextField(event):
     textField.config(state=NORMAL, bg="white")
 
 
-techtxt = open('tech.txt','r',encoding="utf-8")
+techtxt = open(techpath,'r',encoding="utf-8")
 techlist = techtxt.read().splitlines()
-grouptxt = open('group.txt','r',encoding="utf-8")
+grouptxt = open(grouppath,'r',encoding="utf-8")
 grouplist = grouptxt.read().splitlines()
-peopletxt = open('people.txt','r',encoding="utf-8")
+peopletxt = open(peoplepath,'r',encoding="utf-8")
 peoplelist = peopletxt.read().splitlines()
 
 root = Tk()
@@ -98,11 +104,9 @@ actLabel = Label(numberFrame, text = 'Акт о переносе техники 
 actLabel.pack(side=LEFT)
 actNumberEntry = Entry(numberFrame,font='Arial 16', justify='center',textvariable=actNumber,width=4)
 actNumberEntry.pack(side=LEFT)
-
 #----------------------------BUTTONS-----------------------------------------------------------------------------------
 buttonFrame = Frame(root)
 buttonFrame.pack()
-
 tech = StringVar(root)
 tech.set(techlist[0])
 groupOut = StringVar(root)
@@ -121,7 +125,6 @@ groupInMenu = OptionMenu(buttonFrame, groupIn, *grouplist)
 groupInMenu.config(width=21, font=12)
 buttonPlus = Button(buttonFrame, text=' + ', font='Arial 16', justify='center')
 buttonPlus.bind('<Button-1>',nextVar)
-
 techMenu.pack(side=LEFT)
 inventNumberEntry.pack(side=LEFT)
 codeNumberEntry.pack(side=LEFT)
@@ -164,6 +167,5 @@ n2Label = Label(doneFrame, text ='\n',font='Arial 2')
 n2Label.pack(fill=X)
 doneButton.pack(fill=X)
 doneButton.bind('<Button-1>',textFieldToDocx)
-
 
 root.mainloop()
