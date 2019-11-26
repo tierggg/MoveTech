@@ -101,7 +101,7 @@ root.resizable(False, False)
 
 numberFrame = Frame(root)
 numberFrame.pack(fill=X)
-clearButton = Button(numberFrame, text='Очистить\nвсё', pady=10, command=exit, bd=3, relief=GROOVE)
+clearButton = Button(numberFrame, text='Очистить\nвсё', pady=10, bd=3, relief=GROOVE)
 clearButton.grid(row=0, column=0)
 clearButton.bind('<ButtonRelease-1>', restart_program)
 emptyLabel = Label(numberFrame, text=' ', padx=160)
