@@ -15,8 +15,6 @@ if __name__ == "__main__":
     grouppath = "group.txt"
     peoplepath = 'people.txt'
 
-runing = True
-
 document = Document()
 style = document.styles['Normal']
 font = style.font
@@ -40,7 +38,6 @@ def textfieldtodocx(event):
     actpar.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
     table = document.add_table(rows=1, cols=5, style='Table Grid')
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
-
     table.autofit = False
     table.allow_autofit = False
     table.columns[0].width = Inches(0.4)      # № п/п
@@ -66,11 +63,9 @@ def textfieldtodocx(event):
     datepar = document.add_paragraph('\n\n' + dateEntry.get()+'			Подпись_____________		'
                                      + people.get())
     datepar.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-
     file_name = fd.asksaveasfilename(initialfile=('#'+actNumber.get()+'_'+dateEntry.get()),
                                      defaultextension=".docx", filetypes=[('docx files', '*.docx')])
     document.save(file_name)
-
 
 
 def nextvar(event):
@@ -105,12 +100,18 @@ root.title('Mover 9000')
 root.resizable(False, False)
 
 numberFrame = Frame(root)
-numberFrame.pack()
+numberFrame.pack(fill=X)
+clearButton = Button(numberFrame, text='Очистить\nвсё', pady=10, command=exit, bd=3, relief=GROOVE)
+clearButton.grid(row=0, column=0)
+clearButton.bind('<ButtonRelease-1>', restart_program)
+emptyLabel = Label(numberFrame, text=' ', padx=160)
+emptyLabel.grid(row=0, column=1)
 actNumber = StringVar(root)
-actLabel = Label(numberFrame, text='Акт о переносе техники №', font='Arial 16')
-actLabel.pack(side=LEFT)
-actNumberEntry = Entry(numberFrame, font='Arial 16', justify='center', textvariable=actNumber, width=4)
-actNumberEntry.pack(side=LEFT)
+actLabel = Label(numberFrame, text='Акт о переносе техники №', font='Arial 14')
+actLabel.grid(row=0, column=2, sticky=E)
+actNumberEntry = Entry(numberFrame, font='Arial 14', justify='center', textvariable=actNumber, width=4)
+actNumberEntry.grid(row=0, column=3, sticky=W)
+
 # ---------------------------BUTTONS-----------------------------------------------------------------------------------
 buttonFrame = Frame(root)
 buttonFrame.pack()
@@ -122,39 +123,36 @@ groupOut.set(grouplist[0])
 groupIn.set(grouplist[1])
 inventNumber = StringVar(root)
 codeNumber = StringVar(root)
-clearButton = Button(buttonFrame, text='Очистить\nвсё', pady=10, command=exit, bd=3)
-clearButton.pack(side=LEFT)
-clearButton.bind('<ButtonRelease-1>', restart_program)
 techMenu = OptionMenu(buttonFrame, tech, *techlist)
-techMenu.config(width=35, font=12)
-inventNumberEntry = Entry(buttonFrame, font='Arial 16', justify='center', textvariable=inventNumber, width=15)
-codeNumberEntry = Entry(buttonFrame, font='Arial 16', justify='center', textvariable=codeNumber, width=10)
+techMenu.config(width=21, font='Arial 12', relief=GROOVE)
+inventNumberEntry = Entry(buttonFrame, font='Arial 17', justify='center', textvariable=inventNumber, width=15)
+codeNumberEntry = Entry(buttonFrame, font='Arial 17', justify='center', textvariable=codeNumber, width=10)
 groupOutMenu = OptionMenu(buttonFrame, groupOut, *grouplist)
-groupOutMenu.config(width=21, font=12)
+groupOutMenu.config(width=21, font='Arial 12', relief=GROOVE)
 groupInMenu = OptionMenu(buttonFrame, groupIn, *grouplist)
-groupInMenu.config(width=21, font=12)
-buttonPlus = Button(buttonFrame, text='+', font='Arial 22', justify='center', padx=10, pady=1, bd=3)
-buttonPlus.bind('<ButtonRelease-1>', nextvar)
+groupInMenu.config(width=21, font='Arial 12', relief=GROOVE)
 
 techMenu.pack(side=LEFT)
 inventNumberEntry.pack(side=LEFT)
 codeNumberEntry.pack(side=LEFT)
 groupOutMenu.pack(side=LEFT)
 groupInMenu.pack(side=LEFT)
-buttonPlus.pack(side=LEFT)
 # --------------------------BUTTONS--END-------------------------------------------------------------------------------
 
 textFrame = Frame(root)
 textFrame.pack()
-textField = Text(textFrame, width=150, state=DISABLED, bg="gainsboro")
+buttonPlus = Button(textFrame, text='добавить', font='Arial 13', justify='center', relief=GROOVE)
+buttonPlus.bind('<ButtonRelease-1>', nextvar)
+buttonPlus.pack(side=TOP, fill=X)
+textField = Text(textFrame, width=112, state=DISABLED, bg="gainsboro", font='Arial 12')
 scrollText = Scrollbar(textFrame, command=textField.yview)
 scrollText.pack(side=RIGHT, fill=Y)
 textField.config(yscrollcommand=scrollText.set)
 textField.pack()
 doneFrame = Frame(root)
 doneFrame.pack(fill=X)
-editButton = Button(doneFrame, text='Редактировать список', font=16, bd=3)
-doneButton = Button(doneFrame, text='СОХРАНИТЬ', font=18, bd=5)
+editButton = Button(doneFrame, text='Редактировать список', font='Arial 10', bd=2, relief=GROOVE)
+doneButton = Button(doneFrame, text='СОХРАНИТЬ', font='Arial 16', bd=3, relief=GROOVE)
 editButton.pack(side=TOP, fill=X)
 editButton.bind('<ButtonRelease-1>', edittextfield)
 nLabel = Label(doneFrame, text='\n', font='Arial 2')
@@ -164,19 +162,19 @@ dateFrame.pack(fill=X)
 
 noow = datetime.now()
 docDate = StringVar()
-dateEntry = Entry(dateFrame, font='Arial 16', justify='center', textvariable=docDate)
+dateEntry = Entry(dateFrame, font='Arial 14', justify='center', textvariable=docDate)
 dateEntry.insert(0, str(noow.day)+'.'+str(noow.month)+'.'+str(noow.year))
 dateEntry.pack(side=LEFT)
 
 people = StringVar(root)
 people.set(peoplelist[0])
 peopleMenu = OptionMenu(dateFrame, people, *peoplelist)
-peopleMenu.config(width=21, font=12)
+peopleMenu.config(width=21, font='Arial 12', relief=GROOVE)
 peopleMenu.pack(side=RIGHT)
 
 n2Label = Label(doneFrame, text='\n', font='Arial 2')
 n2Label.pack(fill=X)
 doneButton.pack(fill=X)
 doneButton.bind('<ButtonRelease-1>', textfieldtodocx)
-
+doneButton.bind('Control+s>', textfieldtodocx)
 root.mainloop()
