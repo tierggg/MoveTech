@@ -7,12 +7,15 @@ from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from datetime import datetime
 from tkinter import filedialog as fd
+import os
 
 
 if __name__ == "__main__":
     techpath = 'tech.txt'
     grouppath = "group.txt"
     peoplepath = 'people.txt'
+
+runing = True
 
 document = Document()
 style = document.styles['Normal']
@@ -28,7 +31,6 @@ def textfieldtodocx(event):
     for i in range(len(mylist)):
         mylist[i] = str(i+1)+'|'+str(mylist[i])
     records = []
-#    tmplist = []
     for x in range(len(mylist)):
         tmplist = mylist[x].split('|')
         tmplist[2] = tmplist[2] + '\n(' + tmplist[3] + ')'
@@ -68,7 +70,7 @@ def textfieldtodocx(event):
     file_name = fd.asksaveasfilename(initialfile=('#'+actNumber.get()+'_'+dateEntry.get()),
                                      defaultextension=".docx", filetypes=[('docx files', '*.docx')])
     document.save(file_name)
-    root.destroy()
+
 
 
 def nextvar(event):
@@ -80,6 +82,15 @@ def nextvar(event):
 
 def edittextfield(event):
     textField.config(state=NORMAL, bg="white")
+
+
+def restart_program(event):
+    """Restarts the current program.
+    Note: this function does not return. Any cleanup action (like
+    saving data) must be done before calling this function.
+    https://stackoverflow.com/questions/41655618/restart-program-tkinter"""
+    python = sys.executable
+    os.execl(python, python, * sys.argv)
 
 
 techtxt = open(techpath, 'r', encoding="utf-8")
@@ -111,6 +122,9 @@ groupOut.set(grouplist[0])
 groupIn.set(grouplist[1])
 inventNumber = StringVar(root)
 codeNumber = StringVar(root)
+clearButton = Button(buttonFrame, text='Очистить\nвсё', pady=10, command=exit, bd=3)
+clearButton.pack(side=LEFT)
+clearButton.bind('<ButtonRelease-1>', restart_program)
 techMenu = OptionMenu(buttonFrame, tech, *techlist)
 techMenu.config(width=35, font=12)
 inventNumberEntry = Entry(buttonFrame, font='Arial 16', justify='center', textvariable=inventNumber, width=15)
@@ -119,8 +133,9 @@ groupOutMenu = OptionMenu(buttonFrame, groupOut, *grouplist)
 groupOutMenu.config(width=21, font=12)
 groupInMenu = OptionMenu(buttonFrame, groupIn, *grouplist)
 groupInMenu.config(width=21, font=12)
-buttonPlus = Button(buttonFrame, text=' + ', font='Arial 16', justify='center')
-buttonPlus.bind('<Button-1>', nextvar)
+buttonPlus = Button(buttonFrame, text='+', font='Arial 22', justify='center', padx=10, pady=1, bd=3)
+buttonPlus.bind('<ButtonRelease-1>', nextvar)
+
 techMenu.pack(side=LEFT)
 inventNumberEntry.pack(side=LEFT)
 codeNumberEntry.pack(side=LEFT)
@@ -139,9 +154,9 @@ textField.pack()
 doneFrame = Frame(root)
 doneFrame.pack(fill=X)
 editButton = Button(doneFrame, text='Редактировать список', font=16, bd=3)
-doneButton = Button(doneFrame, text='ГОТОВО', font=18, bd=5)
+doneButton = Button(doneFrame, text='СОХРАНИТЬ', font=18, bd=5)
 editButton.pack(side=TOP, fill=X)
-editButton.bind('<Button-1>', edittextfield)
+editButton.bind('<ButtonRelease-1>', edittextfield)
 nLabel = Label(doneFrame, text='\n', font='Arial 2')
 nLabel.pack(fill=X)
 dateFrame = Frame(doneFrame)
@@ -162,6 +177,6 @@ peopleMenu.pack(side=RIGHT)
 n2Label = Label(doneFrame, text='\n', font='Arial 2')
 n2Label.pack(fill=X)
 doneButton.pack(fill=X)
-doneButton.bind('<Button-1>', textfieldtodocx)
+doneButton.bind('<ButtonRelease-1>', textfieldtodocx)
 
 root.mainloop()
